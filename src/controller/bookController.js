@@ -1,49 +1,24 @@
 
-
+const bookService = require('../services/book_services')
 const Book_Model = require('../models/Book_Model');
 
 const getAllBook =async (req,res)=>{
+
     
-    try {
-    const data =await Book_Model.find({});
+    const data = await bookService.getAllBook()
 
-    res.status(200).json({
-        success:"true",
-        data:data
-    })
-
-    } catch (error) {
-        res.status(400).json({
-            success:"false",
-            error:error.message
-        })
-    }
+    res.status(data.statusCode).json(data)
+   
 
 }
 
 const getBookById =async (req,res)=>{
     const {id} = req.params
-    try {
-        const data  = await Book_Model.findById(id);
-        if(!data)
-            res.status(400).json({
-                success:"false",
-                error:"Id Not Found"
-            });
 
-            res.status(200).json({
-                success:"true",
-                data:data
-            })
+    const result = await bookService.getBookById(id)
 
-            
-            
-    } catch (error) {
-        res.status(400).json({
-            success:"false",
-            error:error.message
-        })
-    }
+    res.status(result.statusCode).json({result})
+   
 
 }
 
