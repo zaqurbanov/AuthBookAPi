@@ -25,61 +25,24 @@ const getBookById =async (req,res)=>{
 const createBook = async(req,res)=>{
     
 
-    try {
-        const {title,author} = req.body
+  
+        const {title,author} = req.body;
 
-        if(title==""||author==""||!title || !author){
-            res.status(400).json({
-                success:"false",
-                error:"Full Filed all pleasse "
-            });
-        }    
-        const isExistsBook = await Book_Model.find({title});
-        if(isExistsBook){
-            res.status(400).json({
-                success:"false",
-                error:"Book already exists "
-            });
-        }
-         await Book_Model.create({
-            title,
-            author
-        })
-        res.status(201).json({
-            success:"true",
-            message:"Created Successfully",
-        })
+        const result = await bookService.createBook(title,author)
 
-    } catch (error) {
-        
-    }
+        res.status(result.statusCode).json({result})
+
+   
+
+   
 }
 
 const deleteBookById = async(req,res)=>{
     const {id} = req.params
-    try {
-            const data =await Book_Model.findByIdAndDelete(id);
-        if(!data){
-            res.status(400).json({
-                success:"false",
-                error:"Deleted Failed"
-            });
 
-        }
-
-        res.status(501).json({
-            success:"true",
-            message:"deleted Successfully",
-            data:data
-        })
-
-        
-    } catch (error) {
-        res.status(400).json({
-            success:"false",
-            error:error.message
-        });
-    }
+    const result = bookService.deleteBookById(id)
+    
+    res.status(result.statusCode).json({result})
 
 
 }
