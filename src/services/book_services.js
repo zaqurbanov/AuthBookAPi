@@ -3,7 +3,7 @@ const Book_Model = require("../models/Book_Model");
 
 const getAllBook = async()=>{
     try {
-        const data =await Book_Model.find({});
+        const data =await Book_Model.find({deletedId:0});
     
        return result = {
         success:true,
@@ -27,13 +27,24 @@ const getBookById = async (id)=>{
 
 
     try {
+
         const data  = await Book_Model.findById(id);
-        if(!data)
-            return result = {
+
+        if(!data){
+
+              return result = {
                 success:"false",
                 statusCode:400,
                 error:"Id Not Found"
             };
+        }
+          if(data.deletedId !=0){
+            return result = {
+                success:"false",
+                statusCode:400,
+                error:"Id Not Found deletedId"
+            };
+          }
 
             return result={
                 success:"true",
@@ -65,7 +76,8 @@ const createBook = async (title,author)=>{
             };
         }    
         const isExistsBook = await Book_Model.find({title});
-        if(isExistsBook){
+        console.log(isExistsBook);
+        if(isExistsBook.length>0){
             return result={
                 success:"false",
                 statusCode:400,
@@ -76,7 +88,7 @@ const createBook = async (title,author)=>{
             title,
             author
         })
-        return result={
+        return result={ 
             success:"true",
             statusCode:201,
             message:"Created Successfully",
@@ -95,28 +107,42 @@ const createBook = async (title,author)=>{
 
 const deleteBookById = async(id)=>{
     try {
-        const data =await Book_Model.findByIdAndDelete(id);
-    if(!data){
+        const book = await Book_Model.findById(id)
+    if(!book){
      return result = {
             success:"false",
             statusCode:400,
-            error:"Deleted Failed",
+            error:"Id Not Found",
             
         }
 
     }
-
-    return result = {
+    if(book.deletedId !=0){
+        return result = {
+            success:"false",
+            statusCode:400,
+            error:"Id Not Found deleted already",
+            
+        }
+    }
+       
+        await Book_Model.findByIdAndUpdate(id,{
+            title:book.title,
+            author:book.author,
+            deletedId:book._id
+        })
+        
+    return result = { 
         success:"true",
         message:"deleted Successfully",
-        statusCode:200,
-        data:data
+        statusCode:501,
+        
     }
 
-    
+     
 } catch (error) {
     return result = {
-        success:"false",
+        success:"false", 
         statusCode:400,
         error:error.message
     }

@@ -11,6 +11,11 @@ title:{
 author:{
     type:String,
     required:true,
+},
+deletedId:{
+    type:String,
+    default:0
+
 }
 },{timestamps:true})
 

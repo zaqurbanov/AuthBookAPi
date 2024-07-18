@@ -40,9 +40,9 @@ const createBook = async(req,res)=>{
 const deleteBookById = async(req,res)=>{
     const {id} = req.params
 
-    const result = bookService.deleteBookById(id)
+    const result =await bookService.deleteBookById(id)
     
-    res.status(result.statusCode).json({result})
+    res.status( result.statusCode).json({result})
 
 
 }
